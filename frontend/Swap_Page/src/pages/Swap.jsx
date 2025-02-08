@@ -1,22 +1,64 @@
 import React, { useState, useCallback } from 'react';
-import { ChevronDown, Settings, ArrowUpDown } from 'lucide-react';
+import { ChevronDown, Settings, ArrowUpDown, CheckCircle2, Circle, Loader2 } from 'lucide-react';
 import { BrowserProvider, Contract } from 'ethers';
 
-import PulseBackground from '../components/PulseBackground';
+// Transaction steps component
+const TransactionProgress = ({ isOpen, currentStep }) => {
+  if (!isOpen) return null;
 
+  const steps = [
+    "Query submitted to the agent",
+    "Agents finding best venue for swaps",
+    "Agents finding the best route for swaps",
+    "Agents submitting the best route",
+    "Agent auction",
+    "Swapping according to winning route",
+    "Swap completed"
+  ];
 
+  const getStepStatus = (index) => {
+    if (index < currentStep) return "completed";
+    if (index === currentStep) return "current";
+    return "pending";
+  };
 
-const contractABI = [
-  {
-    "inputs": [],
-    "name": "increase",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  }
-];
+  return (
+    <div className="absolute inset-0 backdrop-blur-sm">
+      <div className="bg-gray-900/95 rounded-3xl border border-purple-900/30 shadow-lg shadow-purple-500/10 p-6 w-full h-full">
+        <h3 className="text-xl font-medium text-gray-100 mb-6">Transaction Progress</h3>
+        <div className="relative">
+          {steps.map((step, index) => (
+            <div key={index} className="flex items-start mb-8 relative">
+              <div className="flex items-center">
+                <div className="mr-4 flex items-center justify-center">
+                  <div className="text-gray-400 w-6">{index + 1}</div>
+                </div>
+                <div className={`flex-1 ${
+                  getStepStatus(index) === 'completed' ? 'text-purple-400' :
+                  getStepStatus(index) === 'current' ? 'text-gray-100' :
+                  'text-gray-500'
+                }`}>
+                  <div className="flex items-center gap-3">
+                    {getStepStatus(index) === 'completed' && <CheckCircle2 className="w-5 h-5 text-purple-400" />}
+                    {getStepStatus(index) === 'current' && <Loader2 className="w-5 h-5 text-purple-400 animate-spin" />}
+                    {getStepStatus(index) === 'pending' && <Circle className="w-5 h-5" />}
+                    {step}
+                  </div>
+                </div>
+              </div>
+              {index < steps.length - 1 && (
+                <div className={`absolute left-[2.5rem] top-8 w-px h-8 ${
+                  getStepStatus(index) === 'completed' ? 'bg-purple-400' : 'bg-gray-700'
+                }`} />
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
 
-// Token and chain lists remain unchanged
 const tokensList = [
   { name: 'Ethereum', symbol: 'ETH', icon: '◊' },
   { name: 'USD Coin', symbol: 'USDC', icon: '$' },
@@ -32,31 +74,81 @@ const chainsList = [
   { name: 'Arbitrum', icon: 'A', id: 'arbitrum' },
 ];
 
+const contractABI = [
+  {
+    "inputs": [],
+    "name": "increase",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+];
+
 const App = () => {
-  // Wallet connection state
+  // Existing states
   const [userAddress, setUserAddress] = useState(null);
   const [isWalletConnected, setIsWalletConnected] = useState(false);
-
-  // Swap interface state
   const [fromTokenDropdownOpen, setFromTokenDropdownOpen] = useState(false);
   const [toTokenDropdownOpen, setToTokenDropdownOpen] = useState(false);
   const [fromChainDropdownOpen, setFromChainDropdownOpen] = useState(false);
   const [toChainDropdownOpen, setToChainDropdownOpen] = useState(false);
-
-  // Add amount states for swapping
   const [fromAmount, setFromAmount] = useState('');
   const [toAmount, setToAmount] = useState('');
-
-  // Modified token and chain states with initial values
   const [fromToken, setFromToken] = useState(tokensList[0]);
   const [toToken, setToToken] = useState(tokensList[1]);
   const [fromChain, setFromChain] = useState(chainsList[0]);
   const [toChain, setToChain] = useState(chainsList[1]);
-
   const [isTransacting, setIsTransacting] = useState(false);
   const [transactionError, setTransactionError] = useState(null);
 
-  // Wallet connection handler
+  // New states for transaction progress
+  const [showTransactionProgress, setShowTransactionProgress] = useState(false);
+  const [currentTransactionStep, setCurrentTransactionStep] = useState(0);
+
+  // Simulate transaction progress
+  const simulateTransactionProgress = async () => {
+    setShowTransactionProgress(true);
+    setCurrentTransactionStep(0);
+    
+    for (let i = 0; i < 7; i++) {
+      await new Promise(resolve => setTimeout(resolve, 2000)); // 2 second delay between steps
+      setCurrentTransactionStep(i + 1);
+    }
+    
+    setTimeout(() => {
+      setShowTransactionProgress(false);
+      setCurrentTransactionStep(0);
+      setIsTransacting(false);
+    }, 2000);
+  };
+
+  // Modified handleSwap function
+  const handleSwap = async () => {
+    setIsTransacting(true);
+    setTransactionError(null);
+
+    try {
+      const provider = new BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      const contractAddress = "0xEA912a237E63fB159A11c5C01A93bD3677248b34";
+      const contract = new Contract(contractAddress, contractABI, signer);
+      
+      const transaction = await contract.increase();
+      simulateTransactionProgress(); // Start progress simulation after transaction is initiated
+      
+      const receipt = await transaction.wait();
+      console.log('Transaction successful:', receipt);
+      
+      setFromAmount('');
+      setToAmount('');
+    } catch (error) {
+      console.error('Transaction failed:', error);
+      setTransactionError(error.message);
+      setIsTransacting(false);
+      setShowTransactionProgress(false);
+    }
+  };
+
   const handleConnectWallet = async () => {
     if (window.ethereum) {
       try {
@@ -75,59 +167,20 @@ const App = () => {
     }
   };
 
-  // New function to handle the swap/contract interaction
-  const handleSwap = async () => {
-    setIsTransacting(true);
-    setTransactionError(null);
-
-    try {
-      // Get provider and signer
-      const provider = new BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner();
-
-      // Create contract instance
-      const contractAddress = "0xEA912a237E63fB159A11c5C01A93bD3677248b34";
-      const contract = new Contract(contractAddress, contractABI, signer);
-
-      // Call the increase function
-      const transaction = await contract.increase();
-      
-      // Wait for transaction to be mined
-      const receipt = await transaction.wait();
-      
-      console.log('Transaction successful:', receipt);
-      
-      // Clear amounts after successful transaction
-      setFromAmount('');
-      setToAmount('');
-
-    } catch (error) {
-      console.error('Transaction failed:', error);
-      setTransactionError(error.message);
-    } finally {
-      setIsTransacting(false);
-    }
-  };
-
-  // New swap direction handler
   const handleSwapDirection = () => {
-    // Swap tokens
     const tempToken = fromToken;
     setFromToken(toToken);
     setToToken(tempToken);
 
-    // Swap chains
     const tempChain = fromChain;
     setFromChain(toChain);
     setToChain(tempChain);
 
-    // Swap amounts
     const tempAmount = fromAmount;
     setFromAmount(toAmount);
     setToAmount(tempAmount);
   };
 
-  // Simplified TokenDropdown component
   const TokenDropdown = ({ isOpen, onClose, onSelect }) => {
     if (!isOpen) return null;
     
@@ -192,7 +245,7 @@ const App = () => {
     );
   };
 
-   const SwapField = ({ 
+  const SwapField = ({ 
     label, 
     token, 
     chain,
@@ -283,74 +336,80 @@ const App = () => {
   return (
     <>
       <div className="relative h-[calc(90vh-64px)] overflow-y-auto">
-        {/* Main Content */}
         <div className="pt-20 pb-20">
           <div className="max-w-lg mx-auto p-6 mt-20">
-            <div className="bg-gray-900/70 backdrop-blur-md rounded-3xl border border-purple-500/20 p-6 shadow-lg shadow-purple-500/5">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-medium text-gray-100">Swap</h2>
-                <button className="w-10 h-10 rounded-xl bg-gray-800/70 hover:bg-gray-800 flex items-center justify-center text-gray-400 hover:text-purple-400 transition-all duration-300">
-                  <Settings size={20} />
-                </button>
-              </div>
+            <div className="bg-gray-900/70 backdrop-blur-md rounded-3xl border border-purple-500/20 p-6 shadow-lg shadow-purple-500/5 relative">
+              {!showTransactionProgress ? (
+                <>
+                  <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-2xl font-medium text-gray-100">Swap</h2>
+                    <button className="w-10 h-10 rounded-xl bg-gray-800/70 hover:bg-gray-800 flex items-center justify-center text-gray-400 hover:text-purple-400 transition-all duration-300">
+                      <Settings size={20} />
+                    </button>
+                  </div>
 
-              <div className="space-y-4">
-                <SwapField 
-                  label="From"
-                  token={fromToken}
-                  chain={fromChain}
-                  amount={fromAmount}
-                  setAmount={setFromAmount}
-                  isTokenDropdownOpen={fromTokenDropdownOpen}
-                  isChainDropdownOpen={fromChainDropdownOpen}
-                  setTokenDropdownOpen={setFromTokenDropdownOpen}
-                  setChainDropdownOpen={setFromChainDropdownOpen}
-                  onTokenSelect={setFromToken}
-                  onChainSelect={setFromChain}
-                />
+                  <div className="space-y-4">
+                    <SwapField 
+                      label="From"
+                      token={fromToken}
+                      chain={fromChain}
+                      amount={fromAmount}
+                      setAmount={setFromAmount}
+                      isTokenDropdownOpen={fromTokenDropdownOpen}
+                      isChainDropdownOpen={fromChainDropdownOpen}
+                      setTokenDropdownOpen={setFromTokenDropdownOpen}
+                      setChainDropdownOpen={setFromChainDropdownOpen}
+                      onTokenSelect={setFromToken}
+                      onChainSelect={setFromChain}
+                    />
 
-                {/* Swap Direction Button */}
-                <div className="flex justify-center">
+                    <div className="flex justify-center">
+                      <button 
+                        onClick={handleSwapDirection}
+                        className="w-10 h-10 bg-gray-800/90 rounded-xl border border-purple-500/30 flex items-center justify-center text-purple-400 hover:text-purple-300 hover:border-purple-400/50 hover:bg-purple-400/10 transition-all duration-300"
+                      >
+                        <ArrowUpDown className="w-6 h-6" />
+                      </button>
+                    </div>
+
+                    <SwapField 
+                      label="To"
+                      token={toToken}
+                      chain={toChain}
+                      amount={toAmount}
+                      setAmount={setToAmount}
+                      isTokenDropdownOpen={toTokenDropdownOpen}
+                      isChainDropdownOpen={toChainDropdownOpen}
+                      setTokenDropdownOpen={setToTokenDropdownOpen}
+                      setChainDropdownOpen={setToChainDropdownOpen}
+                      onTokenSelect={setToToken}
+                      onChainSelect={setToChain}
+                    />
+                  </div>
+
                   <button 
-                    onClick={handleSwapDirection}
-                    className="w-10 h-10 bg-gray-800/90 rounded-xl border border-purple-500/30 flex items-center justify-center text-purple-400 hover:text-purple-300 hover:border-purple-400/50 hover:bg-purple-400/10 transition-all duration-300"
+                    className={`w-full mt-6 py-4 rounded-2xl font-medium transition-all duration-300 shadow-lg ${
+                      isTransacting 
+                        ? 'bg-gray-400 cursor-not-allowed' 
+                        : 'bg-purple-400 text-gray-900 hover:bg-purple-300 shadow-purple-500/50 hover:shadow-purple-500/75'
+                    }`}
+                    onClick={isWalletConnected ? handleSwap : handleConnectWallet}
+                    disabled={isTransacting}
                   >
-                    <ArrowUpDown className="w-6 h-6" />
+                    {isTransacting ? 'Processing...' : (isWalletConnected ? 'Swap' : 'Connect Wallet')}
                   </button>
-                </div>
 
-                <SwapField 
-                  label="To"
-                  token={toToken}
-                  chain={toChain}
-                  amount={toAmount}
-                  setAmount={setToAmount}
-                  isTokenDropdownOpen={toTokenDropdownOpen}
-                  isChainDropdownOpen={toChainDropdownOpen}
-                  setTokenDropdownOpen={setToTokenDropdownOpen}
-                  setChainDropdownOpen={setToChainDropdownOpen}
-                  onTokenSelect={setToToken}
-                  onChainSelect={setToChain}
+                  {transactionError && (
+                    <div className="mt-4 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">
+                      {transactionError}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <TransactionProgress 
+                  isOpen={showTransactionProgress}
+                  currentStep={currentTransactionStep}
                 />
-              </div>
-
-              <button 
-                className={`w-full mt-6 py-4 rounded-2xl font-medium transition-all duration-300 shadow-lg ${
-                  isTransacting 
-                    ? 'bg-gray-400 cursor-not-allowed' 
-                    : 'bg-purple-400 text-gray-900 hover:bg-purple-300 shadow-purple-500/50 hover:shadow-purple-500/75'
-                }`}
-                onClick={isWalletConnected ? handleSwap : handleConnectWallet}
-                disabled={isTransacting}
-              >
-                {isTransacting ? 'Processing...' : (isWalletConnected ? 'Swap' : 'Connect Wallet')}
-              </button>
-
-              {/* Error message display */}
-              {transactionError && (
-                <div className="mt-4 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">
-                  {transactionError}
-                </div>
               )}
             </div>
           </div>
