@@ -1,0 +1,9 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+default_sender = "0x915709e2ecb2162149799ba3ED4a85085dd854a1"
+solc_version = "0.8.17"
+chain_id = 11155111
+
+# See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
