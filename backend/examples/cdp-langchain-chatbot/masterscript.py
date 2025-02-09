@@ -1,5 +1,7 @@
 import re
 import requests
+import json
+import os
 from flask import Flask, request, jsonify
 
 app = Flask(__name__)
@@ -19,6 +21,18 @@ AGENTS = [
     {"id": "agent_8002", "url": "http://127.0.0.1:8002/chat"},
 ]
 
+# Define the absolute path to logs.json in the project root
+LOGS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs.json")
+
+
+def init_logs():
+    """
+    Initialize the logs file if it doesn't exist by writing an empty list.
+    """
+    if not os.path.exists(LOGS_FILE):
+        with open(LOGS_FILE, "w") as f:
+            json.dump([], f, indent=4)
+
 
 def parse_trade_response(response_text: str) -> dict:
     """
@@ -28,7 +42,6 @@ def parse_trade_response(response_text: str) -> dict:
     Returns a dict: { <float ETH amount>: <string transaction link> }
     If parsing fails, returns an empty dict.
     """
-
     # 1. Regex to find "received/for <float> ETH/eth"
     eth_amount_pattern = re.compile(r"(?:received|for)\s+([\d.]+)\s+(?:ETH|eth)", re.IGNORECASE)
     eth_amount_match = eth_amount_pattern.search(response_text)
@@ -56,6 +69,21 @@ def parse_trade_response(response_text: str) -> dict:
     return {eth_amount: tx_link}
 
 
+def log_callback_to_file(agent_id: str, agent_response: str, parsed_data: dict) -> None:
+    """
+    Overwrites logs.json with the current callback.
+    This ensures that old logs are removed after every new request.
+    """
+    log_entry = {
+        "agent_id": agent_id,
+        "agent_response": agent_response,
+        "parsed_data": parsed_data
+    }
+    # Overwrite the file with only the current log entry (as a list)
+    with open(LOGS_FILE, "w") as f:
+        json.dump([log_entry], f, indent=4)
+
+
 @app.route("/agent_callback", methods=["POST"])
 def agent_callback():
     """
@@ -67,6 +95,7 @@ def agent_callback():
     We'll store:
       - The raw text in agent_responses[agent_id]
       - The parsed result in parsed_agent_responses[agent_id]
+      - Then overwrite logs.json with this new log (removing any old logs)
     """
     data = request.get_json() or {}
     agent_id = data.get("agent_id")
@@ -82,9 +111,9 @@ def agent_callback():
     parsed_data = parse_trade_response(agent_response)
     if parsed_data:
         parsed_agent_responses.setdefault(agent_id, []).append(parsed_data)
-        print(f"[MASTER] Parsed data from {agent_id}: {parsed_data}")
-    else:
-        print(f"[MASTER] Could not parse data from {agent_id} or no relevant info found.")
+
+    # 3) Log to JSON (this will overwrite old logs)
+    log_callback_to_file(agent_id, agent_response, parsed_data)
 
     return "Received", 200
 
@@ -93,6 +122,7 @@ def agent_callback():
 def get_all_responses():
     """
     Retrieve both raw and parsed responses so far.
+    (Returns JSON; does not print to the console.)
     """
     return jsonify({
         "raw_responses": agent_responses,
@@ -126,6 +156,11 @@ def send_prompt():
         except Exception as e:
             immediate_responses[agent_id] = f"Could not reach agent: {e}"
 
+    # (Optional) If you want to log these immediate responses, you could do so here.
+    # For example:
+    # for agent_id, response in immediate_responses.items():
+    #     log_callback_to_file(agent_id, response, parse_trade_response(response))
+
     return jsonify({
         "immediate_responses": immediate_responses,
         "note": "Agents will callback to /agent_callback with final responses."
@@ -134,8 +169,11 @@ def send_prompt():
 
 def main():
     """
-    Start the master on port 6000.
+    Start the master server on port 6000.
     """
+    # Initialize the log file on startup (if it doesn't already exist)
+    init_logs()
+
     print("Master server running on http://0.0.0.0:6000")
     app.run(host="0.0.0.0", port=6000, debug=True)
 

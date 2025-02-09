@@ -1,0 +1,69 @@
+2025-02-09 00:22:59,412 INFO: Received prompt: tell me your wallet balances
+2025-02-09 00:22:59,413 INFO: Sending request to agent agent_8000 at http://127.0.0.1:8000/chat
+2025-02-09 00:22:59,425 DEBUG: Starting new HTTP connection (1): 127.0.0.1:8000
+2025-02-09 00:23:06,805 ERROR: Server error in agent_callback: name 'parse_trade_response' is not defined
+2025-02-09 00:23:06,810 DEBUG: http://127.0.0.1:8000 "POST /chat HTTP/1.1" 200 395
+2025-02-09 00:23:06,811 INFO: Received response from agent_8000
+2025-02-09 00:23:06,811 INFO: Sending request to agent agent_8001 at http://127.0.0.1:8001/chat
+2025-02-09 00:23:06,813 DEBUG: Starting new HTTP connection (1): 127.0.0.1:8001
+2025-02-09 00:23:13,245 ERROR: Server error in agent_callback: name 'parse_trade_response' is not defined
+2025-02-09 00:23:13,247 DEBUG: http://127.0.0.1:8001 "POST /chat HTTP/1.1" 200 377
+2025-02-09 00:23:13,247 INFO: Received response from agent_8001
+2025-02-09 00:23:13,247 INFO: Sending request to agent agent_8002 at http://127.0.0.1:8002/chat
+2025-02-09 00:23:13,248 DEBUG: Starting new HTTP connection (1): 127.0.0.1:8002
+2025-02-09 00:23:18,976 ERROR: Server error in agent_callback: name 'parse_trade_response' is not defined
+2025-02-09 00:23:18,978 DEBUG: http://127.0.0.1:8002 "POST /chat HTTP/1.1" 200 397
+2025-02-09 00:23:18,979 INFO: Received response from agent_8002
+2025-02-09 00:23:18,979 INFO: Returning response to client
+2025-02-09 00:26:07,048 INFO: Received prompt: tell me your wallet balances
+2025-02-09 00:26:07,049 INFO: Sending request to agent agent_8000 at http://127.0.0.1:8000/chat
+2025-02-09 00:26:07,051 DEBUG: Starting new HTTP connection (1): 127.0.0.1:8000
+2025-02-09 00:26:17,053 ERROR: Error connecting to agent_8000: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=10)
+2025-02-09 00:26:17,053 INFO: Sending request to agent agent_8001 at http://127.0.0.1:8001/chat
+2025-02-09 00:26:17,057 DEBUG: Starting new HTTP connection (1): 127.0.0.1:8001
+2025-02-09 00:26:20,864 ERROR: Server error in agent_callback: name 'parse_trade_response' is not defined
+2025-02-09 00:26:22,472 ERROR: Server error in agent_callback: name 'parse_trade_response' is not defined
+2025-02-09 00:26:22,474 DEBUG: http://127.0.0.1:8001 "POST /chat HTTP/1.1" 200 379
+2025-02-09 00:26:22,474 INFO: Received response from agent_8001
+2025-02-09 00:26:22,474 INFO: Sending request to agent agent_8002 at http://127.0.0.1:8002/chat
+2025-02-09 00:26:22,475 DEBUG: Starting new HTTP connection (1): 127.0.0.1:8002
+2025-02-09 00:26:28,144 ERROR: Server error in agent_callback: name 'parse_trade_response' is not defined
+2025-02-09 00:26:28,145 DEBUG: http://127.0.0.1:8002 "POST /chat HTTP/1.1" 200 451
+2025-02-09 00:26:28,145 INFO: Received response from agent_8002
+2025-02-09 00:26:28,145 INFO: Returning response to client
+2025-02-09 00:27:50,890 INFO: Received prompt: tell me your wallet balances
+2025-02-09 00:27:50,890 INFO: Sending request to agent agent_8000 at http://127.0.0.1:8000/chat
+2025-02-09 00:27:50,892 DEBUG: Starting new HTTP connection (1): 127.0.0.1:8000
+2025-02-09 00:27:57,299 ERROR: Server error in agent_callback: name 'parse_trade_response' is not defined
+2025-02-09 00:27:57,302 DEBUG: http://127.0.0.1:8000 "POST /chat HTTP/1.1" 200 368
+2025-02-09 00:27:57,302 INFO: Received response from agent_8000
+2025-02-09 00:27:57,303 INFO: Sending request to agent agent_8001 at http://127.0.0.1:8001/chat
+2025-02-09 00:27:57,304 DEBUG: Starting new HTTP connection (1): 127.0.0.1:8001
+2025-02-09 00:28:03,800 ERROR: Server error in agent_callback: name 'parse_trade_response' is not defined
+2025-02-09 00:28:03,803 DEBUG: http://127.0.0.1:8001 "POST /chat HTTP/1.1" 200 451
+2025-02-09 00:28:03,803 INFO: Received response from agent_8001
+2025-02-09 00:28:03,803 INFO: Sending request to agent agent_8002 at http://127.0.0.1:8002/chat
+2025-02-09 00:28:03,804 DEBUG: Starting new HTTP connection (1): 127.0.0.1:8002
+2025-02-09 00:28:10,213 ERROR: Server error in agent_callback: name 'parse_trade_response' is not defined
+2025-02-09 00:28:10,216 DEBUG: http://127.0.0.1:8002 "POST /chat HTTP/1.1" 200 398
+2025-02-09 00:28:10,216 INFO: Received response from agent_8002
+2025-02-09 00:28:10,216 INFO: Returning response to client
+2025-02-09 00:30:35,615 INFO: Received prompt: tell me your wallet balances
+2025-02-09 00:30:35,616 INFO: Sending request to agent agent_8000 at http://127.0.0.1:8000/chat
+2025-02-09 00:30:35,622 DEBUG: Starting new HTTP connection (1): 127.0.0.1:8000
+2025-02-09 00:30:44,225 ERROR: Server error in agent_callback: name 'parse_trade_response' is not defined
+2025-02-09 00:30:44,228 DEBUG: http://127.0.0.1:8000 "POST /chat HTTP/1.1" 200 362
+2025-02-09 00:30:44,229 INFO: Received response from agent_8000
+2025-02-09 00:30:44,229 INFO: Sending request to agent agent_8001 at http://127.0.0.1:8001/chat
+2025-02-09 00:30:44,230 DEBUG: Starting new HTTP connection (1): 127.0.0.1:8001
+2025-02-09 00:30:49,528 ERROR: Server error in agent_callback: name 'parse_trade_response' is not defined
+2025-02-09 00:30:49,529 DEBUG: http://127.0.0.1:8001 "POST /chat HTTP/1.1" 200 395
+2025-02-09 00:30:49,530 INFO: Received response from agent_8001
+2025-02-09 00:30:49,530 INFO: Sending request to agent agent_8002 at http://127.0.0.1:8002/chat
+2025-02-09 00:30:49,531 DEBUG: Starting new HTTP connection (1): 127.0.0.1:8002
+2025-02-09 00:30:55,876 ERROR: Server error in agent_callback: name 'parse_trade_response' is not defined
+2025-02-09 00:30:55,878 DEBUG: http://127.0.0.1:8002 "POST /chat HTTP/1.1" 200 376
+2025-02-09 00:30:55,878 INFO: Received response from agent_8002
+2025-02-09 00:30:55,878 INFO: Returning response to client
+2025-02-09 00:34:51,728 ERROR: Invalid JSON in logs.json, creating new file
+2025-02-09 00:45:12,442 ERROR: Invalid JSON in logs.json, creating new file

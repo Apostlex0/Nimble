@@ -7,4 +7,4 @@ export
 .PHONY: run
 run:
 	poetry install && \
-	poetry run python chatbot3.py
+	poetry run python chatbot2.py
