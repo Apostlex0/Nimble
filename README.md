@@ -69,7 +69,6 @@ User -> Nimble Frontend -> (Swap Backend | Deposit Backend | Withdraw Backend) -
    - Execute the transaction on-chain.
 4. Result is returned to the user (swapped assets or updated vault balance).
 
-![High-Level Diagram]
 ![image](https://github.com/user-attachments/assets/1c57f852-00f5-4d46-83b0-42f476013ed5)
 
 
@@ -82,7 +81,6 @@ The swap flow is:
 3. Swap Contract runs an auction to pick the best solver agent.
 4. Winning Solver Agent executes the swap and sends funds back to the user.
 
-![Swap Infrastructure]
 ![image](https://github.com/user-attachments/assets/9d1c51fb-bb4d-4adf-9335-5d92bc351458)
 
 
@@ -93,7 +91,6 @@ The swap flow is:
 3. Deposit or Withdraw Contract chooses the best agent based on yield or other optimization criteria.
 4. Winning Agent finalizes depositing or withdrawing on behalf of the user.
 
-![Deposit/Withdraw Infrastructure]
 ![image](https://github.com/user-attachments/assets/c60113e2-f9a3-49c1-b5c7-f7287fdc8c0c)
 
 
