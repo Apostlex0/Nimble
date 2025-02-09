@@ -3,7 +3,7 @@
 Nimble is an AI‐agent‐based solver network that helps users get the best price for swaps and also supports deposits and withdrawals in Morpho vaults. The network is chain‐agnostic and has been demonstrated on [Base](https://base.org/) for this project. The solver agents are built with [Coinbase’s AgentKit](https://github.com/coinbase/agentkit), and the frontend is deployed on OpSec.
 
 ### Deployment on OpSec
-[Deployment](https://nimbleland.opsec.run/)
+Click Here to open the [app](https://nimbleland.opsec.run/)
 
 ### Arbitrum Mainnet Contracts
 
