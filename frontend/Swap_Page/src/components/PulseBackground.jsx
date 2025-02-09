@@ -65,7 +65,7 @@ const PulseBackground = () => {
     return (
       <canvas 
         id="futuristic-bg"
-        className="fixed inset-0 w-full h-full bg-gradient-to-br from-[#170B3B] to-[#0A0612]"
+        className="fixed inset-0 w-full h-full bg-gradient-to-br from-[#0A0612] to-[#170B3B]"
         style={{ zIndex: -1 }}
       />
     );

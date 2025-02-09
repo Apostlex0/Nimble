@@ -59,13 +59,34 @@ const DepositWithdrawForm = ({ selectedVault }) => {
   const walletBalance = 5000.00;
   const projectedEarnings = 120.00;
 
-  const handleSubmit = () => {
-    if (action === 'deposit') {
-      // Handle deposit logic
-      console.log('Depositing:', amount);
-    } else {
-      // Handle withdraw logic
-      console.log('Withdrawing:', amount);
+  const handleSubmit = async () => {
+    try {
+      if (action === 'deposit') {
+        // Call the deposit endpoint on our backend
+        const response = await fetch('http://localhost:9762/deposit', {
+          method: 'POST',
+        });
+        if (!response.ok) {
+          throw new Error(`Deposit failed. Status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log("Deposit success:", data);
+        alert("Deposit successful!");
+      } else {
+        // Call the withdraw endpoint on our backend
+        const response = await fetch('http://localhost:9762/withdraw', {
+          method: 'POST',
+        });
+        if (!response.ok) {
+          throw new Error(`Withdraw failed. Status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log("Withdraw success:", data);
+        alert("Withdraw successful!");
+      }
+    } catch (error) {
+      console.error("Error in handleSubmit:", error);
+      alert(`Error: ${error.message}`);
     }
   };
 
@@ -160,59 +181,55 @@ const MyVaults = () => {
   const vaults = [
     {
       icon: BsCurrencyDollar,
-      name: 'sUSDA Pool',
+      name: 'Smokehouse USDC',
       date: '24 Apr 2025 (74 days)',
-      apy: '30.54',
-      liquidity: '7.01M',
-      bgColor: 'bg-purple-900'
+      apy: '12.80',
+      liquidity: '24.93M',
+      bgColor: 'bg-purple-900',
+      externalLink: 'https://app.morpho.org/ethereum/vault/0xBEeFFF209270748ddd194831b3fa287a5386f5bC/smokehouse-usdc'
     },
     {
       icon: SiDogecoin,
-      name: 'scrvUSD Pool',
+      name: 'Steakhouse USDC',
       date: '26 Jun 2025 (137 days)',
-      apy: '29.7',
-      liquidity: '115,253',
-      bgColor: 'bg-yellow-900'
+      apy: '6.78',
+      liquidity: '35.60M',
+      bgColor: 'bg-yellow-900',
+      externalLink: 'https://app.morpho.org/ethereum/vault/0xBEEF01735c132Ada46AA9aA4c54623cAA92A64CB/steakhouse-usdc'
     },
     {
       icon: BsCurrencyDollar,
-      name: 'syrupUSDC Pool',
+      name: 'Gauntlet USDC Core',
       date: '24 Apr 2025 (74 days)',
-      apy: '21.64',
-      liquidity: '12.51M',
-      bgColor: 'bg-orange-900'
+      apy: '9.32',
+      liquidity: '66.80M',
+      bgColor: 'bg-orange-900',
+      externalLink:'https://app.morpho.org/ethereum/vault/0x8eB67A509616cd6A7c1B3c8C21D48FF57df3d458/gauntlet-usdc-core'
     }
   ];
+
+    const handleVaultClick = (index, externalLink) => {
+    setSelectedVaultIndex(index);
+    // Open the external link in a new tab
+    window.open(externalLink, '_blank', 'noopener noreferrer');
+  };
 
   return (
     <div className="min-h-screen bg-transparent">
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-8">
-          <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600 mb-2">
-            Vaults
+          <h2 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600 mb-2">
+            VAULTS
           </h2>
           <p className="text-gray-400">Exit anytime at market price. Liquidity provision with minimal IL.</p>
         </div>
-
-        <div className="flex gap-4 mb-8">
-          <button className="px-4 py-2 rounded-lg bg-purple-600 bg-opacity-20 text-purple-400 hover:bg-opacity-30 transition-all">
-            🔥 Popular
-          </button>
-          <button className="px-4 py-2 rounded-lg bg-gray-800 bg-opacity-20 text-gray-400 hover:bg-opacity-30 transition-all">
-            ⭐ Favourites
-          </button>
-          <button className="px-4 py-2 rounded-lg bg-gray-800 bg-opacity-20 text-gray-400 hover:bg-opacity-30 transition-all">
-            💎 All Active
-          </button>
-        </div>
-
         <div className="flex gap-8">
           <div className="flex-1 space-y-4">
             {vaults.map((vault, index) => (
               <VaultCard 
                 key={index} 
                 {...vault} 
-                onSelect={() => setSelectedVaultIndex(index)}
+                onSelect={() => handleVaultClick(index, vault.externalLink)}
                 isSelected={selectedVaultIndex === index}
               />
             ))}

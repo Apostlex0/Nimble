@@ -47,7 +47,7 @@ const Dashboard = () => {
   const shortAddress = `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`;
 
   return (
-    <div className="h-[calc(100vh-64px)] overflow-y-auto bg-transparent text-white">
+    <div className="h-[calc(100vh-64px)] mt-5 overflow-y-auto bg-transparent text-white">
       {/* Header */}
       <div className="border-b border-purple-900/50">
         <div className="max-w-7xl mx-auto px-4 py-4">
@@ -57,7 +57,7 @@ const Dashboard = () => {
               <img src={baseIcon} alt="Base Icon" className="w-5 h-5" />
                 Base
               </button>
-              <h1 className="text-xl font-semibold">Dashboard</h1>
+              <h1 className="text-3xl font-semibold">DASHBOARD</h1>
             </div>
             
             <button className="flex items-center gap-2 px-4 py-2 bg-purple-600/20 rounded-full text-purple-200 hover:bg-purple-600/30 transition-all duration-300 border border-purple-500/50 hover:border-purple-500 hover:shadow-[0_0_15px_rgba(147,51,234,0.3)]">
@@ -104,12 +104,6 @@ const Dashboard = () => {
               >
                 My Positions
               </TabButton>
-              <TabButton 
-                active={activeTab === 'My Orders'}
-                onClick={() => setActiveTab('My Orders')}
-              >
-                My Orders
-              </TabButton>
             </div>
 
             <div className="flex items-center gap-2 p-1 bg-purple-600/20 rounded-lg border border-purple-500/30">
@@ -143,27 +137,11 @@ const Dashboard = () => {
             >
               All Assets
             </button>
-            <button className="text-purple-300 hover:text-purple-200 px-2 transition-colors">
-              PT
-            </button>
-            <button className="text-purple-300 hover:text-purple-200 px-2 transition-colors">
-              YT
-            </button>
-            <button className="text-purple-300 hover:text-purple-200 px-2 transition-colors">
-              LP
-            </button>
           </div>
         </div>
 
         {/* Empty State */}
         <div className="flex flex-col items-center justify-center py-20">
-          <div className="w-32 h-32 mb-6">
-            <img 
-              src="/api/placeholder/128/128"
-              alt="Empty state"
-              className="w-full h-full object-contain opacity-70"
-            />
-          </div>
           <p className="text-purple-300 mb-6">You do not have any positions yet.</p>
           <button 
             onClick={() => navigate('/markets')}

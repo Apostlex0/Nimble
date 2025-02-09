@@ -252,7 +252,7 @@ import NFTCard from './components/NFTCard.jsx';
               <div className="absolute bottom-20 right-10 w-96 h-96 bg-violet-500/5 rounded-full blur-3xl"></div>
             </div>
 
-            <h2 className="text-4xl mt-[-100px] font-bold text-center mb-16 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-violet-500 animate-pulse-slow relative">
+            <h2 className="text-4xl mt-[-50px] font-bold text-center mb-16 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-violet-500 animate-pulse-slow relative">
               Agents solve across
               <div className="absolute -inset-2 bg-purple-400/10 blur-3xl -z-10"></div>
             </h2>
