@@ -85,22 +85,18 @@ const TransactionProgress = ({ isOpen, currentStep, onClose }) => {
               <div className="w-full max-w-md space-y-2 mb-6">
                 <div className="flex justify-between items-center text-gray-300">
                   <span>You sold</span>
-                  <span className="font-medium">20 USDT</span>
+                  <span className="font-medium">0.01 USDC</span>
                 </div>
                 <div className="flex justify-between items-center text-gray-300">
                   <span>You received</span>
-                  <span className="font-medium">0.00608 ETH</span>
-                </div>
-                <div className="flex justify-between items-center text-cyan-400">
-                  <span>Extra earned</span>
-                  <span className="font-medium">+0.001537 ETH (~$4.08)</span>
+                  <span className="font-medium">0.00000373 ETH</span>
                 </div>
               </div>
 
               {/* Solver Rankings Section */}
               <div className="w-full max-w-md bg-slate-800/50 rounded-2xl p-6 mb-8 border border-cyan-500/10">
                 <h3 className="text-gray-300 mb-4">Solver auction rankings</h3>
-                <p className="text-sm text-gray-400 mb-4">9 out of 26 solvers submitted a solution</p>
+                <p className="text-sm text-gray-400 mb-4">8 out of 12 solvers submitted a solution</p>
                 
                 <div className="space-y-3">
                   {/* Winner */}
@@ -108,9 +104,9 @@ const TransactionProgress = ({ isOpen, currentStep, onClose }) => {
                     <div className="flex items-center gap-3">
                       <span className="text-cyan-400">1</span>
                       <div className="w-6 h-6 rounded-full bg-cyan-400/20 flex items-center justify-center">
-                        <span className="text-cyan-400 text-sm">G</span>
+                        <span className="text-cyan-400 text-sm">F</span>
                       </div>
-                      <span className="text-cyan-400">GlueX</span>
+                      <span className="text-cyan-400">Fulcrum</span>
                     </div>
                     <span className="text-xs text-cyan-400 bg-cyan-400/20 px-3 py-1 rounded-full">
                       Winning solver
@@ -122,9 +118,9 @@ const TransactionProgress = ({ isOpen, currentStep, onClose }) => {
                     <div className="flex items-center gap-3">
                       <span className="text-gray-400">2</span>
                       <div className="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center">
-                        <span className="text-gray-400 text-sm">C</span>
+                        <span className="text-gray-400 text-sm">A</span>
                       </div>
-                      <span className="text-gray-400">Copium Capital</span>
+                      <span className="text-gray-400">Arishem</span>
                     </div>
                   </div>
                   
@@ -132,9 +128,9 @@ const TransactionProgress = ({ isOpen, currentStep, onClose }) => {
                     <div className="flex items-center gap-3">
                       <span className="text-gray-400">3</span>
                       <div className="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center">
-                        <span className="text-gray-400 text-sm">B</span>
+                        <span className="text-gray-400 text-sm">T</span>
                       </div>
-                      <span className="text-gray-400">Barter</span>
+                      <span className="text-gray-400">Tiamut</span>
                     </div>
                   </div>
                 </div>
@@ -436,34 +432,51 @@ const CONTRACT_ABI = [
   };
 
   const handleSwap = async () => {
-  setTransactionError(null);
-  setIsTransacting(true);
-  setShowTransactionProgress(true);
-  setCurrentTransactionStep(0);
-
-  try {
+    setTransactionError(null);
+    setIsTransacting(true);
+    setShowTransactionProgress(true);
+    setCurrentTransactionStep(0);
+  
+    // Start the progressive animation
+    let currentStep = 0;
+    const progressInterval = setInterval(() => {
+      currentStep++;
+      if (currentStep < 6) { // Don't automatically progress to completion
+        setCurrentTransactionStep(currentStep);
+      }
+    }, 2000); // 2 seconds per step
+  
+    try {
       // Send a POST request to your backend (port 9762)
       const response = await fetch("http://localhost:9762/run-script", {
         method: "POST",
       });
+      
       // Parse the JSON response
       const data = await response.json();
-      setCurrentTransactionStep(6); // Move to final step
+      
+      // Clear the progressive interval as transaction is complete
+      clearInterval(progressInterval);
+      
+      // Move to final step
+      setCurrentTransactionStep(6);
+      
+      // Handle completion
       setTimeout(() => {
         setShowTransactionProgress(false);
         setIsTransacting(false);
       }, 5000);
-      clearInterval(stepInterval);
+    } catch (error) {
+      // Clear the progressive interval on error
+      clearInterval(progressInterval);
+      
+      // Handle error state
+      console.error("Swap error:", error);
+      setTransactionError(error.message);
+      setIsTransacting(false);
+      setShowTransactionProgress(false);
     }
-  catch (error) {
-    // Capture any error messages
-    console.error("Swap error:", error);
-    setTransactionError(error.message);
-    setIsTransacting(false);
-    setShowTransactionProgress(false);
-    clearInterval(stepInterval);
-  }
-};
+  };
 
   const handleSwapDirection = () => {
     const tempToken = fromToken;
