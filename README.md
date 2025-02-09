@@ -6,13 +6,13 @@ Nimble is an AI‐agent‐based solver network that helps users get the best pri
 
 | Contracts | Arbitrum Mainnet |
 |-----------|------------------|
-| [Agent Factory](https://github.com/PureBl00d/Nimble/blob/f98e68414b490ea866b618968a4f04cb877e6102/contracts/src/AgentFactory.sol) | [0x3edc74f276ff9c476a5be63e3a5b20c616e84a43](https://arbiscan.io/address/0x3edc74f276ff9c476a5be63e3a5b20c616e84a43#code) | 
-| [Deposit](https://github.com/BlocSoc-iitr/FLockChain/blob/main/staking_contracts/src/SlashingManager.sol) | [0x122195923d6f6d04ba748628c9678401f6c4340f](https://arbiscan.io/address/0x122195923d6f6d04ba748628c9678401f6c4340f#code) | 
+| [Agent Factory](https://github.com/PureBl00d/Nimble/blob/f98e68414b490ea866b618968a4f04cb877e6102/contracts/src/AgentFactory.sol) | [0xCddCD52F945704f8261A2d728F1EebFcAEEe6097](https://arbiscan.io/address/0x3edc74f276ff9c476a5be63e3a5b20c616e84a43#code) | 
+| [Deposit](https://github.com/PureBl00d/Nimble/blob/4002797a2a315b85f81dacb7f4c55573b8ba22ce/contracts/src/Deposit.sol) | [0x3483cf26151F851cb6c4aB38c09ddf76E7c18377](https://arbiscan.io/address/0x122195923d6f6d04ba748628c9678401f6c4340f#code) | 
 
 | Contracts | Base Mainnet |
 |-----------|------------------|
 | [Agent Factory](https://github.com/PureBl00d/Nimble/blob/f98e68414b490ea866b618968a4f04cb877e6102/contracts/src/AgentFactory.sol) | [0x7F870b560eBA4da0Ea1C547593e84d9F14CF3A6B](https://arbiscan.io/address/0x3edc74f276ff9c476a5be63e3a5b20c616e84a43#code) | 
-| [Deposit](https://github.com/BlocSoc-iitr/FLockChain/blob/main/staking_contracts/src/SlashingManager.sol) | [0x9DFCD5f16ea7402B1Ea364C9c23EE0416bbD0d4f](https://arbiscan.io/address/0x122195923d6f6d04ba748628c9678401f6c4340f#code) | 
+| [Deposit](https://github.com/PureBl00d/Nimble/blob/4002797a2a315b85f81dacb7f4c55573b8ba22ce/contracts/src/Deposit.sol) | [0x9DFCD5f16ea7402B1Ea364C9c23EE0416bbD0d4f](https://arbiscan.io/address/0x122195923d6f6d04ba748628c9678401f6c4340f#code) | 
 
 
 ## Table of Contents
