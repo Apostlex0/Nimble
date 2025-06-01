@@ -1,7 +1,34 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ChevronDown, Settings, ArrowUpDown, CheckCircle2, Circle, Loader2 } from 'lucide-react';
 import { BrowserProvider, Contract, parseEther } from 'ethers';
+import ethIcon from 'cryptocurrency-icons/svg/color/eth.svg';
+import usdcIcon from 'cryptocurrency-icons/svg/color/usdc.svg';
+import maticIcon from 'cryptocurrency-icons/svg/color/matic.svg';
 
+const ArbitrumIcon = ({ className = "w-6 h-6" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 100 100"
+    className={className}
+  >
+    <path
+      d="M50 0C22.4 0 0 22.4 0 50s22.4 50 50 50 50-22.4 50-50S77.6 0 50 0z"
+      fill="#213147"
+    />
+    <path
+      d="M76.9 35.7c-.5-1-1.2-1.9-2.1-2.6L53.5 17.6c-1.1-.9-2.4-1.4-3.8-1.4-1.4 0-2.7.5-3.8 1.4L24.6 33.1c-.9.7-1.6 1.6-2.1 2.6-.5 1-.7 2.1-.7 3.2v31c0 1.1.2 2.2.7 3.2.5 1 1.2 1.9 2.1 2.6l21.3 15.5c1.1.9 2.4 1.4 3.8 1.4 1.4 0 2.7-.5 3.8-1.4l21.3-15.5c.9-.7 1.6-1.6 2.1-2.6.5-1 .7-2.1.7-3.2v-31c0-1.1-.2-2.2-.7-3.2z"
+      fill="#fff"
+    />
+    <path
+      d="M49.7 20.8c-1.1 0-2.2.4-3 1.1L25.4 37.4c-.7.5-1.3 1.3-1.6 2.1-.4.8-.6 1.7-.6 2.6v31c0 .9.2 1.8.6 2.6.4.8.9 1.5 1.6 2.1l21.3 15.5c.9.7 2 1.1 3 1.1 1.1 0 2.2-.4 3-1.1l21.3-15.5c.7-.5 1.3-1.3 1.6-2.1.4-.8.6-1.7.6-2.6v-31c0-.9-.2-1.8-.6-2.6-.4-.8-.9-1.5-1.6-2.1L52.7 21.9c-.9-.7-2-1.1-3-1.1z"
+      fill="#213147"
+    />
+    <path
+      d="M49.7 39.9c-.3 0-.5.1-.7.3l-12.8 9.3c-.2.1-.3.3-.4.5-.1.2-.1.4-.1.6v18.6c0 .2 0 .4.1.6.1.2.2.4.4.5l12.8 9.3c.2.2.5.3.7.3.3 0 .5-.1.7-.3l12.8-9.3c.2-.1.3-.3.4-.5.1-.2.1-.4.1-.6V50.6c0-.2 0-.4-.1-.6-.1-.2-.2-.4-.4-.5L50.4 40.2c-.2-.2-.4-.3-.7-.3z"
+      fill="#fff"
+    />
+  </svg>
+);
 // Transaction steps component
 
 const TransactionProgress = ({ isOpen, currentStep, onClose }) => {
@@ -215,19 +242,12 @@ const TransactionProgress = ({ isOpen, currentStep, onClose }) => {
 };
 
 const tokensList = [
-  { name: 'Ethereum', symbol: 'ETH', icon: '◊' },
-  { name: 'USD Coin', symbol: 'USDC', icon: '$' },
-  { name: 'Tether', symbol: 'USDT', icon: 'T' },
-  { name: 'Arbitrum', symbol: 'ARB', icon: 'A' },
-  { name: 'Polygon', symbol: 'MATIC', icon: 'P' },
+  { name: 'Ethereum', symbol: 'ETH', icon: <img src={ethIcon } alt="ETH" /> },
+  { name: 'USD Coin', symbol: 'USDC', icon: <img src={usdcIcon} alt="USDC" /> },
+  { name: 'Arbitrum', symbol: 'ARB', icon: <ArbitrumIcon /> },
+  { name: 'Polygon', symbol: 'MATIC', icon: <img src={maticIcon} alt="MATIC" /> },
 ];
 
-const chainsList = [
-  { name: 'Ethereum', icon: '◊', id: 'ethereum' },
-  { name: 'Polygon', icon: 'P', id: 'polygon' },
-  { name: 'Base', icon: 'B', id: 'base' },
-  { name: 'Arbitrum', icon: 'A', id: 'arbitrum' },
-];
 
 const App = () => {
   // Existing states
@@ -235,14 +255,10 @@ const App = () => {
   const [isWalletConnected, setIsWalletConnected] = useState(false);
   const [fromTokenDropdownOpen, setFromTokenDropdownOpen] = useState(false);
   const [toTokenDropdownOpen, setToTokenDropdownOpen] = useState(false);
-  const [fromChainDropdownOpen, setFromChainDropdownOpen] = useState(false);
-  const [toChainDropdownOpen, setToChainDropdownOpen] = useState(false);
   const [fromAmount, setFromAmount] = useState('');
   const [toAmount, setToAmount] = useState('');
   const [fromToken, setFromToken] = useState(tokensList[0]);
   const [toToken, setToToken] = useState(tokensList[1]);
-  const [fromChain, setFromChain] = useState(chainsList[0]);
-  const [toChain, setToChain] = useState(chainsList[1]);
   const [isTransacting, setIsTransacting] = useState(false);
   const [transactionError, setTransactionError] = useState(null);
 
@@ -450,6 +466,14 @@ const CONTRACT_ABI = [
       // Send a POST request to your backend (port 9762)
       const response = await fetch("http://localhost:9762/run-script", {
         method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          amount: fromAmount,
+          fromToken: fromToken.symbol,
+          toToken: toToken.symbol
+        })
       });
       
       // Parse the JSON response
@@ -482,10 +506,6 @@ const CONTRACT_ABI = [
     const tempToken = fromToken;
     setFromToken(toToken);
     setToToken(tempToken);
-
-    const tempChain = fromChain;
-    setFromChain(toChain);
-    setToChain(tempChain);
 
     const tempAmount = fromAmount;
     setFromAmount(toAmount);
@@ -544,44 +564,14 @@ const CONTRACT_ABI = [
     );
   };
 
-  const ChainDropdown = ({ isOpen, onClose, onSelect, selectedChain }) => {
-    if (!isOpen) return null;
-    
-    return (
-      <div className="absolute z-50 mt-2 w-48 bg-gray-900/95 backdrop-blur-md rounded-2xl border border-purple-900/30 shadow-lg shadow-purple-500/10 right-0">
-        {chainsList.map((chain) => (
-          <div
-            key={chain.id}
-            className="flex items-center gap-3 px-4 py-3 hover:bg-purple-400/5 cursor-pointer group"
-            onClick={() => {
-              onSelect(chain);
-              onClose();
-            }}
-          >
-            <div className="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-lg">
-              {chain.icon}
-            </div>
-            <div className="text-gray-100 group-hover:text-purple-400 transition-colors">
-              {chain.name}
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  };
-
   const SwapField = ({ 
     label, 
     token, 
-    chain,
     amount,
     setAmount,
     isTokenDropdownOpen,
-    isChainDropdownOpen,
     setTokenDropdownOpen,
-    setChainDropdownOpen,
     onTokenSelect,
-    onChainSelect
   }) => (
     <div className="bg-gray-800/50 p-4 rounded-2xl border border-gray-700/30 relative">
       <div className="flex items-center justify-between mb-2">
@@ -635,24 +625,6 @@ const CONTRACT_ABI = [
               onSelect={onTokenSelect}
             />
           </div>
-          
-          <div className="relative">
-            <button 
-              className="flex items-center gap-2 bg-gray-700/50 hover:bg-purple-400/10 px-3 py-2 rounded-full transition-all duration-300 border border-gray-700/50 hover:border-purple-400/50 group"
-              onClick={() => setChainDropdownOpen(!isChainDropdownOpen)}
-            >
-              <div className="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center">
-                {chain.icon}
-              </div>
-              <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-purple-400" />
-            </button>
-            <ChainDropdown 
-              isOpen={isChainDropdownOpen}
-              onClose={() => setChainDropdownOpen(false)}
-              onSelect={onChainSelect}
-              selectedChain={chain}
-            />
-          </div>
         </div>
       </div>
     </div>
@@ -676,17 +648,13 @@ const CONTRACT_ABI = [
                   <div className="space-y-4">
                     {/* ----- SwapField FROM ----- */}
                     <SwapField
-                      label="From"
+                       label="From"
                       token={fromToken}
-                      chain={fromChain}
                       amount={fromAmount}
                       setAmount={setFromAmount}
                       isTokenDropdownOpen={fromTokenDropdownOpen}
-                      isChainDropdownOpen={fromChainDropdownOpen}
                       setTokenDropdownOpen={setFromTokenDropdownOpen}
-                      setChainDropdownOpen={setFromChainDropdownOpen}
                       onTokenSelect={setFromToken}
-                      onChainSelect={setFromChain}
                     />
 
                     <div className="flex justify-center">
@@ -702,15 +670,11 @@ const CONTRACT_ABI = [
                     <SwapField
                       label="To"
                       token={toToken}
-                      chain={toChain}
                       amount={toAmount}
                       setAmount={setToAmount}
                       isTokenDropdownOpen={toTokenDropdownOpen}
-                      isChainDropdownOpen={toChainDropdownOpen}
                       setTokenDropdownOpen={setToTokenDropdownOpen}
-                      setChainDropdownOpen={setToChainDropdownOpen}
                       onTokenSelect={setToToken}
-                      onChainSelect={setToChain}
                     />
                   </div>
 
