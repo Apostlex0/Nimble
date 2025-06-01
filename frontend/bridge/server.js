@@ -11,29 +11,43 @@ app.use(express.json());
 
 // (Optional) Keep or remove this existing /run-script
 app.post("/run-script", (req, res) => {
+  const { amount, fromToken, toToken } = req.body;
+  
   const scriptCmd =
     `curl -X POST http://127.0.0.1:6000/send_prompt ` +
     `-H "Content-Type: application/json" ` +
-    `-d '{"prompt":"You have to trade 0.01 USDC for ETH"}'`;
+    `-d '{"prompt":"You have to trade ${amount} ${fromToken} for ${toToken}"}'`;
 
   exec(scriptCmd, (error, stdout, stderr) => {
     if (error) {
       console.error("Error running script:", error.message);
       return res.status(500).json({ error: error.message });
     }
+    
     console.log("Script output (stdout):", stdout);
     console.error("Script errors (stderr):", stderr);
-    return res.json({ message: "Script executed successfully!" });
+    
+    // Return the raw response to be parsed on the frontend
+    return res.json({ 
+      message: "Script executed successfully!",
+      agentResponse: stdout
+    });
   });
 });
 
 // NEW: Deposit endpoint
 app.post("/deposit", (req, res) => {
-  // The deposit curl command
+  const { amount } = req.body;
+  
+  if (!amount || isNaN(amount) || amount <= 0) {
+    return res.status(400).json({ error: "Invalid amount provided" });
+  }
+
+  // The deposit curl command with dynamic amount
   const depositScript =
     `curl -X POST http://127.0.0.1:6000/send_prompt ` +
     `-H "Content-Type: application/json" ` +
-    `-d '{"prompt":"You have to deposit 0.01 USDC in a morpho vault."}'`;
+    `-d '{"prompt":"You have to deposit ${amount} USDC in a morpho vault."}'`;
 
   exec(depositScript, (error, stdout, stderr) => {
     if (error) {
@@ -48,11 +62,17 @@ app.post("/deposit", (req, res) => {
 
 // NEW: Withdraw endpoint
 app.post("/withdraw", (req, res) => {
-  // The withdraw curl command
+  const { amount } = req.body;
+  
+  if (!amount || isNaN(amount) || amount <= 0) {
+    return res.status(400).json({ error: "Invalid amount provided" });
+  }
+
+  // The withdraw curl command with dynamic amount
   const withdrawScript =
     `curl -X POST http://127.0.0.1:6000/send_prompt ` +
     `-H "Content-Type: application/json" ` +
-    `-d '{"prompt":"You have to withdraw 0.01 USDC from the morpho vault."}'`;
+    `-d '{"prompt":"You have to withdraw ${amount} USDC from the morpho vault."}'`;
 
   exec(withdrawScript, (error, stdout, stderr) => {
     if (error) {
