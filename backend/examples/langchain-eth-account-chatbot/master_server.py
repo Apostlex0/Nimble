@@ -2,6 +2,8 @@ import os
 import json
 from flask import Flask, request, jsonify, render_template_string
 from dotenv import load_dotenv
+import requests
+import datetime
 
 app = Flask(__name__)
 load_dotenv()
@@ -31,6 +33,9 @@ DASHBOARD_TEMPLATE = """
         .header { display: flex; justify-content: space-between; align-items: center; }
         .form-container { margin-bottom: 20px; }
         textarea { width: 100%; height: 100px; padding: 10px; margin-bottom: 10px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        select { padding: 8px; width: 100%; max-width: 300px; }
         button { padding: 10px 15px; background-color: #0066cc; color: white; border: none; 
                 border-radius: 4px; cursor: pointer; }
         button:hover { background-color: #0052a3; }
@@ -43,7 +48,19 @@ DASHBOARD_TEMPLATE = """
         <div class="form-container">
             <h2>Send Command to All Agents</h2>
             <form action="/broadcast" method="post">
-                <textarea name="prompt" placeholder="Enter your command here..."></textarea>
+                <div class="form-group">
+                    <textarea name="prompt" placeholder="Enter your command here..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="chain">Select Blockchain:</label>
+                    <select name="chain" id="chain">
+                        <option value="1">Ethereum Mainnet</option>
+                        <option value="8453">Base Mainnet</option>
+                        <option value="42161">Arbitrum Mainnet</option>
+                        <option value="10">Optimism Mainnet</option>
+                        <option value="84532">Base Sepolia (Testnet)</option>
+                    </select>
+                </div>
                 <button type="submit">Send to All Agents</button>
             </form>
         </div>
@@ -108,27 +125,51 @@ def agent_response():
 def broadcast():
     """Broadcast a prompt to all agent endpoints."""
     prompt = request.form.get('prompt')
+    chain_id = request.form.get('chain', '1')  # Default to Ethereum mainnet if not specified
     
     if not prompt:
         return "No prompt provided", 400
         
+    # Map chain IDs to readable names for display
+    chain_names = {
+        "1": "Ethereum Mainnet",
+        "8453": "Base Mainnet",
+        "42161": "Arbitrum Mainnet",
+        "10": "Optimism Mainnet",
+        "84532": "Base Sepolia (Testnet)"
+    }
+    
+    chain_name = chain_names.get(chain_id, f"Chain ID {chain_id}")
+    
     # This function doesn't directly call the agents but provides
     # instructions on how to do so in the response
-    import datetime
+    
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
     # Add a system message to all agents
     for agent_id in agents:
         agents[agent_id]['responses'].append({
-            'prompt': f"[BROADCAST] {prompt}",
-            'message': "This broadcast command will be sent to all agents when you start them with the 'web' parameter.",
+            'prompt': f"[BROADCAST] {prompt} (on {chain_name})",
+            'message': f"This broadcast command will be sent to all agents when you start them with the 'web' parameter. Chain: {chain_name} (ID: {chain_id})",
             'time': timestamp
         })
+        
+        # Try to send the command to running agents
+        try:
+            port = agent_id.split('_')[1]
+            agent_url = f"http://127.0.0.1:{port}/chat"
+            payload = {
+                "prompt": prompt,
+                "chain_id": chain_id
+            }
+            requests.post(agent_url, json=payload, timeout=0.5)  # Non-blocking request
+        except Exception as e:
+            print(f"Could not reach agent {agent_id}: {e}")
     
     return render_template_string(
         DASHBOARD_TEMPLATE, 
         agents=agents, 
-        message="Command broadcast successfully! Note that agents must be running to receive this command."
+        message=f"Command broadcast successfully on {chain_name}! Agents have been notified if they are running."
     )
 
 if __name__ == '__main__':
