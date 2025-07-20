@@ -1,9 +1,6 @@
 # Nimble
 
-Nimble is an AI‐agent‐based solver network that helps users get the best price for swaps and also supports deposits and withdrawals in Morpho vaults. The network is chain‐agnostic and has been demonstrated on [Base](https://base.org/) for this project. The solver agents are built with [Coinbase’s AgentKit](https://github.com/coinbase/agentkit), and the frontend is deployed on OpSec.
-
-### Deployment on OpSec
-Click Here to open the [app](https://nimbleland.opsec.run/)
+Nimble is an AI‐agent‐based solver network that helps users get the best price for swaps and also supports deposits and withdrawals in Morpho vaults. The network is chain‐agnostic and has been demonstrated on [Base](https://base.org/) for this project. The solver agents are built with [Coinbase’s AgentKit](https://github.com/coinbase/agentkit).
 
 ### Arbitrum Mainnet Contracts
 
@@ -189,18 +186,7 @@ The swap flow is:
    - Funds are returned to your wallet.
 
 
-## 6. Deployment
-
-- Frontend is deployed on OpSec. If you want to deploy your own instance, configure hosting and run:
-  
-  npm run dev
-  
-  Then upload the build artifacts to your hosting service of choice.
-
-- Smart Contracts are on Base (testnet or mainnet). You can adapt the deployment scripts to other EVM chains.
-
-
-## 7. Project Status
+## 6. Project Status
 
 - Alpha Release: The core functionality (swap, deposit, withdraw) is operational on Base for demonstration.  
 - Next Steps:
@@ -210,7 +196,7 @@ The swap flow is:
 
 ---
 
-## 8. Contributing
+## 7. Contributing
 
 We welcome contributions! To get started:
 
@@ -224,7 +210,7 @@ Please open an issue first if you intend to make major changes, so we can coordi
 
 ---
 
-## 9. License
+## 8. License
 
 Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
 
